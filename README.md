@@ -1,4 +1,8 @@
 ```mermaid
+---
+config:
+  layout: elk
+---
 erDiagram
     USERS ||--o{ ADDRESSES : has
     USERS ||--|| CARTS : owns
