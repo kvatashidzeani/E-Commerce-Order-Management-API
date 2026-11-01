@@ -1,6 +1,5 @@
 # E-Commerce Order Management API
 
-
 Online store backend + React storefront focused on **data integrity**, **transactions**, **security** and **testing** — not feature count.
 
 ## Stack
@@ -123,9 +122,14 @@ docker compose down
 
 ### Useful HTTP files
 
-- `http/week1-products.http`
-- `http/week2-auth-cart.http`
-- `http/week3-orders.http`
+- `http/products.http`
+- `http/auth-cart.http`
+- `http/orders.http`
+
+### Live demo
+
+> Deployed demo URL will go here after hosting (e.g. Railway / Render / Fly.io).  
+> Until then, run locally with Option A or B above.
 
 ## Tests
 
