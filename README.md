@@ -36,7 +36,6 @@ Online store backend + React storefront focused on **data integrity**, **transac
 | ADMIN | `admin@shop.com` | `Admin123!` |
 | CUSTOMER | `user@shop.com` | `User123!` |
 
-Also kept for older local DBs: `admin@ecommerce.local` / `Admin123!`.
 
 Catalog seed: Flyway `V3__seed_products.sql` (~40+ products across all categories).  
 Product images: Flyway `V4__product_images.sql` (`image_url`).  
@@ -52,7 +51,7 @@ SKU `LAP-LAST-1` has **stock = 1** for concurrency demos.
 
 ![Swagger UI](docs/screenshots/04-swagger.png)
 
-> Tip: after login you can also capture Cart / Checkout / Orders / Admin and add more PNGs under `docs/screenshots/`.
+
 
 ## Order status machine
 
@@ -97,7 +96,7 @@ docker compose up -d --build
 
 | Service | URL |
 |---|---|
-| Frontend (nginx) | (http://127.0.0.1:5173)|
+| Frontend (nginx) http://127.0.0.1:5173
 | API | http://localhost:8081 |
 
 Stop:
@@ -126,10 +125,6 @@ docker compose down
 - `http/auth-cart.http`
 - `http/orders.http`
 
-### Live demo
-
-> Deployed demo URL will go here after hosting (e.g. Railway / Render / Fly.io).  
-> Until then, run locally with Option A or B above.
 
 ## Tests
 
@@ -166,21 +161,7 @@ npm run build
 | GET | `/api/orders/admin/all`, `/api/orders/admin/{id}` | ADMIN |
 | PATCH | `/api/orders/{id}/status` | ADMIN |
 
-Product payloads include optional `imageUrl` (create/update) and return it in responses.
 
-## Deploy notes
-
-Local/server deploy is the included Compose stack (`postgres` + `api` + `frontend`).
-
-For a public host:
-
-1. Change `POSTGRES_PASSWORD` and `APP_JWT_SECRET`  
-2. Build frontend with a public API URL:  
-   `VITE_API_URL=https://api.your-domain.com`  
-3. Restrict CORS to your frontend origin  
-4. Terminate HTTPS (Caddy / nginx / Cloudflare)
-
-`VITE_API_URL` is baked in at **frontend build time** — `localhost` will not work for remote users.
 
 ## ER diagram
 
