@@ -1,6 +1,5 @@
 # E-Commerce Order Management API
 
-[![CI](https://github.com/kvatashidzeani/E-Commerce-Order-Management-API-/actions/workflows/ci.yml/badge.svg)](https://github.com/kvatashidzeani/E-Commerce-Order-Management-API-/actions/workflows/ci.yml)
 
 Online store backend + React storefront focused on **data integrity**, **transactions**, **security** and **testing** — not feature count.
 
