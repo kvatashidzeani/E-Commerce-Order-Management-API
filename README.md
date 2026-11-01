@@ -97,7 +97,7 @@ docker compose up -d --build
 
 | Service | URL |
 |---|---|
-| Frontend (nginx) | http://localhost:3000 |
+| Frontend (nginx) | (http://127.0.0.1:5173)|
 | API | http://localhost:8081 |
 
 Stop:
