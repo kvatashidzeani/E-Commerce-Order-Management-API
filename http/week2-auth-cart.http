@@ -1,0 +1,74 @@
+### Register customer
+POST http://localhost:8081/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "customer@example.com",
+  "password": "Customer123!",
+  "firstName": "Nino",
+  "lastName": "Beridze"
+}
+
+### Login customer
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "customer@example.com",
+  "password": "Customer123!"
+}
+
+> {% client.global.set("customerToken", response.body.accessToken); %}
+
+### Login admin
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@ecommerce.local",
+  "password": "Admin123!"
+}
+
+> {% client.global.set("adminToken", response.body.accessToken); %}
+
+### Create product as ADMIN
+POST http://localhost:8081/api/products
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "iPhone 16",
+  "description": "Latest phone",
+  "sku": "PHN-IP16-001",
+  "price": 1299.00,
+  "stockQuantity": 5,
+  "categoryId": 5,
+  "active": true
+}
+
+### Get cart (CUSTOMER)
+GET http://localhost:8081/api/cart
+Authorization: Bearer {{customerToken}}
+
+### Add item to cart
+POST http://localhost:8081/api/cart/items
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "quantity": 2
+}
+
+### Update cart item quantity
+PATCH http://localhost:8081/api/cart/items/1
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+  "quantity": 3
+}
+
+### Remove cart item
+DELETE http://localhost:8081/api/cart/items/1
+Authorization: Bearer {{customerToken}}

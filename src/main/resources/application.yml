@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: order-management-api
+  datasource:
+    url: jdbc:postgresql://localhost:5433/ecommerce
+    username: ecommerce
+    password: ecommerce
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        format_sql: true
+    show-sql: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: 8081
+
+app:
+  jwt:
+    secret: "ChangeThisSecretKeyToAtLeast256BitsForHs256Algorithm!!"
+    expiration-ms: 86400000
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+  show-actuator: false
+
+logging:
+  level:
+    org.hibernate.SQL: INFO
+    com.ecommerce.ordermanagement: DEBUG

@@ -1,0 +1,81 @@
+### Login customer
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "customer@example.com",
+  "password": "Customer123!"
+}
+
+> {% client.global.set("customerToken", response.body.accessToken); %}
+
+### Login admin
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@ecommerce.local",
+  "password": "Admin123!"
+}
+
+> {% client.global.set("adminToken", response.body.accessToken); %}
+
+### Add item to cart
+POST http://localhost:8081/api/cart/items
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "quantity": 1
+}
+
+### Checkout
+POST http://localhost:8081/api/orders
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+  "shippingAddress": {
+    "recipientName": "Nino Beridze",
+    "phone": "+995555000111",
+    "country": "Georgia",
+    "city": "Tbilisi",
+    "street": "Rustaveli 1",
+    "postalCode": "0108"
+  }
+}
+
+> {% client.global.set("orderId", response.body.id); %}
+
+### Pay order
+POST http://localhost:8081/api/orders/{{orderId}}/pay
+Authorization: Bearer {{customerToken}}
+
+### Admin ships order
+PATCH http://localhost:8081/api/orders/{{orderId}}/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "SHIPPED",
+  "comment": "Handed to courier"
+}
+
+### Admin delivers order
+PATCH http://localhost:8081/api/orders/{{orderId}}/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "status": "DELIVERED",
+  "comment": "Delivered to customer"
+}
+
+### List my orders
+GET http://localhost:8081/api/orders?page=0&size=10
+Authorization: Bearer {{customerToken}}
+
+### Cancel example (use while PENDING or PAID)
+# POST http://localhost:8081/api/orders/{{orderId}}/cancel
+# Authorization: Bearer {{customerToken}}

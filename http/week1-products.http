@@ -1,0 +1,43 @@
+### List categories
+GET http://localhost:8081/api/categories
+
+### Create category
+POST http://localhost:8081/api/categories
+Content-Type: application/json
+
+{
+  "name": "Accessories",
+  "parentId": null
+}
+
+### Create product
+POST http://localhost:8081/api/products
+Content-Type: application/json
+
+{
+  "name": "ThinkPad X1 Carbon",
+  "description": "14-inch business laptop",
+  "sku": "LAP-X1C-001",
+  "price": 1899.99,
+  "stockQuantity": 10,
+  "categoryId": 4,
+  "active": true
+}
+
+### List products (pagination + filters)
+GET http://localhost:8081/api/products?category=4&minPrice=100&maxPrice=3000&search=Think&page=0&size=10&sort=price,asc
+
+### Get product by id
+GET http://localhost:8081/api/products/1
+
+### Update product
+PUT http://localhost:8081/api/products/1
+Content-Type: application/json
+
+{
+  "price": 1799.99,
+  "stockQuantity": 8
+}
+
+### Soft-delete / deactivate product
+DELETE http://localhost:8081/api/products/1

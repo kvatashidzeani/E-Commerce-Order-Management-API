@@ -1,8 +1,187 @@
+# E-Commerce Order Management API
+
+[![CI](https://github.com/kvatashidzeani/E-Commerce-Order-Management-API-/actions/workflows/ci.yml/badge.svg)](https://github.com/kvatashidzeani/E-Commerce-Order-Management-API-/actions/workflows/ci.yml)
+
+Online store backend + React storefront focused on **data integrity**, **transactions**, **security** and **testing** — not feature count.
+
+## Stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Java 21, Spring Boot 3.x |
+| Persistence | Spring Data JPA, Flyway, PostgreSQL |
+| Security | Spring Security + JWT |
+| Validation | Jakarta Bean Validation |
+| Mapping | MapStruct |
+| Docs | springdoc-openapi (Swagger UI) |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS, TanStack Query, React Hook Form + Zod, Axios, Sonner |
+| Tests | JUnit 5, Mockito, MockMvc, Testcontainers, JaCoCo · Vitest (frontend) |
+| Infra | Docker + docker-compose |
+| CI | GitHub Actions (backend `mvn verify` + frontend lint/test/build) |
+
+## Features
+
+- [x] Product catalog (pagination / sorting / filters / images) + categories
+- [x] JWT auth (`CUSTOMER` / `ADMIN`)
+- [x] Cart with stock validation and totals
+- [x] Transactional checkout, payment simulation, cancel + stock restore
+- [x] Order status machine + history
+- [x] Concurrency-safe stock reservation (pessimistic lock)
+- [x] Admin product CRUD + order status transitions
+- [x] React frontend (catalog, cart, checkout, orders, admin)
+- [x] Tests + JaCoCo + CI workflow
+
+### Demo users (seeded on startup)
+
+| Role | Email | Password |
+|---|---|---|
+| ADMIN | `admin@shop.com` | `Admin123!` |
+| CUSTOMER | `user@shop.com` | `User123!` |
+
+Also kept for older local DBs: `admin@ecommerce.local` / `Admin123!`.
+
+Catalog seed: Flyway `V3__seed_products.sql` (~40+ products across all categories).  
+Product images: Flyway `V4__product_images.sql` (`image_url`).  
+SKU `LAP-LAST-1` has **stock = 1** for concurrency demos.
+
+> **Security note:** the SPA stores the JWT in `localStorage` for demo convenience. In production prefer an **httpOnly** cookie (reduces XSS token theft risk).
+
+## Screenshots
+
+![Catalog with product photos](docs/screenshots/02-catalog.png)
+
+![Login](docs/screenshots/03-login.png)
+
+![Swagger UI](docs/screenshots/04-swagger.png)
+
+> Tip: after login you can also capture Cart / Checkout / Orders / Admin and add more PNGs under `docs/screenshots/`.
+
+## Order status machine
+
 ```mermaid
----
-config:
-  layout: elk
----
+stateDiagram-v2
+    [*] --> PENDING
+    PENDING --> PAID: pay
+    PENDING --> CANCELLED: cancel
+    PAID --> SHIPPED: admin
+    PAID --> CANCELLED: cancel
+    SHIPPED --> DELIVERED: admin
+    CANCELLED --> [*]
+    DELIVERED --> [*]
+```
+
+Illegal transitions are rejected (e.g. `SHIPPED → PENDING`). Cancel restores reserved stock.
+
+## Quick start
+
+### Option A — local API + Docker Postgres + Vite
+
+```bash
+docker compose up -d postgres
+mvn spring-boot:run
+cd frontend && npm install && npm run dev
+```
+
+| Service | URL |
+|---|---|
+| Frontend (Vite) | http://localhost:5173 |
+| API | http://localhost:8081 |
+| Swagger | http://localhost:8081/swagger-ui.html |
+| Postgres (host) | `localhost:5433` |
+
+Frontend env: `frontend/.env` → `VITE_API_URL=http://localhost:8081`
+
+### Option B — full stack in Docker
+
+```bash
+docker compose up -d --build
+```
+
+| Service | URL |
+|---|---|
+| Frontend (nginx) | http://localhost:3000 |
+| API | http://localhost:8081 |
+
+Stop:
+
+```bash
+docker compose down
+```
+
+### Customer happy path
+
+1. Register / login as CUSTOMER  
+2. Browse catalog → add to cart  
+3. Checkout with shipping address  
+4. Pay order → watch status timeline  
+5. (Optional) Admin ships / delivers the order  
+
+### Admin happy path
+
+1. Login as `admin@shop.com`  
+2. `/admin/products` — create / edit / activate-deactivate  
+3. `/admin/orders` — filter by status, apply allowed next status  
+
+### Useful HTTP files
+
+- `http/week1-products.http`
+- `http/week2-auth-cart.http`
+- `http/week3-orders.http`
+
+## Tests
+
+**Backend**
+
+```bash
+mvn test
+mvn verify   # JaCoCo report: target/site/jacoco/index.html
+```
+
+Integration/concurrency tests use Testcontainers (Docker required).
+
+**Frontend**
+
+```bash
+cd frontend
+npm ci
+npm run lint
+npm test
+npm run build
+```
+
+## Main endpoints
+
+| Method | Path | Access |
+|---|---|---|
+| POST | `/api/auth/register`, `/api/auth/login` | public |
+| GET | `/api/products`, `/api/categories` | public |
+| POST/PUT/DELETE | `/api/products` | ADMIN |
+| GET/POST/PATCH/DELETE | `/api/cart/**` | CUSTOMER |
+| POST | `/api/orders` (checkout) | CUSTOMER |
+| GET | `/api/orders`, `/api/orders/{id}` | CUSTOMER (own) |
+| POST | `/api/orders/{id}/pay`, `/api/orders/{id}/cancel` | CUSTOMER |
+| GET | `/api/orders/admin/all`, `/api/orders/admin/{id}` | ADMIN |
+| PATCH | `/api/orders/{id}/status` | ADMIN |
+
+Product payloads include optional `imageUrl` (create/update) and return it in responses.
+
+## Deploy notes
+
+Local/server deploy is the included Compose stack (`postgres` + `api` + `frontend`).
+
+For a public host:
+
+1. Change `POSTGRES_PASSWORD` and `APP_JWT_SECRET`  
+2. Build frontend with a public API URL:  
+   `VITE_API_URL=https://api.your-domain.com`  
+3. Restrict CORS to your frontend origin  
+4. Terminate HTTPS (Caddy / nginx / Cloudflare)
+
+`VITE_API_URL` is baked in at **frontend build time** — `localhost` will not work for remote users.
+
+## ER diagram
+
+```mermaid
 erDiagram
     USERS ||--o{ ADDRESSES : has
     USERS ||--|| CARTS : owns
@@ -15,123 +194,4 @@ erDiagram
     ORDERS ||--|{ ORDER_ITEMS : contains
     PRODUCTS ||--o{ ORDER_ITEMS : "sold as"
     ORDERS ||--|{ ORDER_STATUS_HISTORY : tracks
-
-    USERS {
-        bigint id PK
-        varchar email UK
-        varchar password_hash
-        varchar first_name
-        varchar last_name
-        varchar role "CUSTOMER | ADMIN"
-        boolean enabled
-        timestamptz created_at
-        timestamptz updated_at
-    }
-    ADDRESSES {
-        bigint id PK
-        bigint user_id FK
-        varchar recipient_name
-        varchar phone
-        varchar country
-        varchar city
-        varchar street
-        varchar postal_code
-        boolean is_default
-    }
-    CATEGORIES {
-        bigint id PK
-        varchar name UK
-        bigint parent_id FK
-    }
-    PRODUCTS {
-        bigint id PK
-        bigint category_id FK
-        varchar name
-        text description
-        varchar sku UK
-        numeric price
-        int stock_quantity
-        boolean active
-        bigint version "optimistic lock"
-        timestamptz created_at
-        timestamptz updated_at
-    }
-    CARTS {
-        bigint id PK
-        bigint user_id FK, UK
-        timestamptz updated_at
-    }
-    CART_ITEMS {
-        bigint id PK
-        bigint cart_id FK
-        bigint product_id FK
-        int quantity
-        timestamptz added_at
-    }
-    ORDERS {
-        bigint id PK
-        varchar order_number UK
-        bigint user_id FK
-        varchar status "PENDING|PAID|SHIPPED|DELIVERED|CANCELLED"
-        numeric total_amount
-        varchar shipping_recipient
-        varchar shipping_phone
-        varchar shipping_country
-        varchar shipping_city
-        varchar shipping_street
-        varchar shipping_postal_code
-        timestamptz paid_at
-        timestamptz shipped_at
-        timestamptz delivered_at
-        timestamptz cancelled_at
-        timestamptz created_at
-        timestamptz updated_at
-    }
-    ORDER_ITEMS {
-        bigint id PK
-        bigint order_id FK
-        bigint product_id FK
-        varchar product_name_snapshot
-        numeric unit_price_at_purchase
-        int quantity
-        numeric line_total
-    }
-    ORDER_STATUS_HISTORY {
-        bigint id PK
-        bigint order_id FK
-        varchar from_status
-        varchar to_status
-        bigint changed_by FK
-        timestamptz changed_at
-        varchar comment
-    }
 ```
-## Design decisions
-
-### 1. Shipping address is copied into `orders` (snapshot)
-`orders` stores the shipping address as plain columns instead of a foreign key to `addresses`. If a user edits or deletes an address later, historical orders must stay unchanged. An order is a legal and financial record of what was true at the time of purchase.
-
-### 2. `unit_price_at_purchase` and `product_name_snapshot` in `order_items`
-Product prices and names change over time. Storing them on the order line freezes the values the customer actually agreed to, so past orders and totals never change retroactively.
-
-### 3. Optimistic locking with `products.version`
-Two customers may try to buy the last unit at the same time. A `@Version` column makes the second transaction fail with `OptimisticLockException` instead of overselling. This is verified by a multi-threaded integration test.
-
-### 4. Soft delete for products (`active = false`)
-Products referenced by existing orders can never be physically deleted (`ON DELETE RESTRICT`). Deactivating hides them from the catalog while keeping order history intact.
-
-### 5. `cart_items` and `order_items` are entities, not `@ManyToMany`
-Both join tables carry their own data (quantity, price), so they are modeled as full entities with their own primary keys. A `UNIQUE (cart_id, product_id)` constraint prevents duplicate lines.
-
-### 6. Append-only `order_status_history`
-Every status change inserts a new row (who, when, from, to) and rows are never updated or deleted. This gives a full audit trail and makes it easy to answer "who shipped this order and when?".
-
-### 7. `NUMERIC(12,2)` / `BigDecimal` for money
-Floating-point types cause rounding errors. All monetary values use exact decimal types in both the database and Java.
-
-### 8. Database-level constraints as a second line of defense
-`CHECK (stock_quantity >= 0)`, `CHECK (price >= 0)`, enum `CHECK`s and unique indexes protect data integrity even if application code has a bug.
-
-### 9. Schema managed by Flyway
-No `ddl-auto=update`. Every schema change is a versioned, reviewable SQL migration.
-
