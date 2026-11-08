@@ -46,7 +46,7 @@ SKU `LAP-LAST-1` has **stock = 1** for concurrency demos.
 
 ## Architecture
 
-![Architecture](docs/screenshots/01-architecture.jpg)
+![Architecture — Shopito](docs/screenshots/01-architecture-shopito.png)
 
 - **Frontend:** React/Vite on **Vercel**
 - **Backend:** Spring Boot API on **Railway**

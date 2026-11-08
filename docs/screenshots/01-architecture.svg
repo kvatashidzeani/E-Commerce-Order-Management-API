@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="420" viewBox="0 0 960 420" role="img" aria-label="Shopito architecture diagram">
+  <defs>
+    <style>
+      .title { font: 700 28px "Segoe UI", system-ui, sans-serif; fill: #0f766e; }
+      .label { font: 600 20px "Segoe UI", system-ui, sans-serif; fill: #134e4a; }
+      .sub { font: 400 15px "Segoe UI", system-ui, sans-serif; fill: #334155; }
+      .pill { font: 600 13px "Segoe UI", system-ui, sans-serif; fill: #0f766e; }
+      .box { fill: #ffffff; stroke: #99f6e4; stroke-width: 2; }
+      .arrow { stroke: #14b8a6; stroke-width: 2.5; fill: none; marker-end: url(#arrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#14b8a6"/>
+    </marker>
+  </defs>
+  <rect width="960" height="420" fill="#f8fafc"/>
+  <text x="480" y="48" text-anchor="middle" class="title">Shopito  Architecture</text>
+
+  <!-- Frontend -->
+  <rect x="60" y="110" width="240" height="240" rx="18" class="box"/>
+  <text x="180" y="155" text-anchor="middle" class="label">Frontend</text>
+  <text x="180" y="185" text-anchor="middle" class="sub">React + Vite</text>
+  <rect x="105" y="285" width="150" height="34" rx="17" fill="#ecfdf5" stroke="#5eead4"/>
+  <text x="180" y="307" text-anchor="middle" class="pill">Vercel</text>
+
+  <!-- Backend -->
+  <rect x="360" y="110" width="240" height="240" rx="18" class="box"/>
+  <text x="480" y="155" text-anchor="middle" class="label">Backend API</text>
+  <text x="480" y="185" text-anchor="middle" class="sub">Spring Boot 3 + JWT</text>
+  <rect x="405" y="285" width="150" height="34" rx="17" fill="#ecfdf5" stroke="#5eead4"/>
+  <text x="480" y="307" text-anchor="middle" class="pill">Railway</text>
+
+  <!-- Database -->
+  <rect x="660" y="110" width="240" height="240" rx="18" class="box"/>
+  <text x="780" y="155" text-anchor="middle" class="label">Database</text>
+  <text x="780" y="185" text-anchor="middle" class="sub">PostgreSQL</text>
+  <rect x="705" y="285" width="150" height="34" rx="17" fill="#ecfdf5" stroke="#5eead4"/>
+  <text x="780" y="307" text-anchor="middle" class="pill">Railway</text>
+
+  <!-- Arrows -->
+  <path d="M 302 230 L 358 230" class="arrow"/>
+  <text x="330" y="218" text-anchor="middle" class="sub" font-size="12">HTTPS + JWT</text>
+  <path d="M 602 230 L 658 230" class="arrow"/>
+  <text x="630" y="218" text-anchor="middle" class="sub" font-size="12">JDBC</text>
+</svg>
