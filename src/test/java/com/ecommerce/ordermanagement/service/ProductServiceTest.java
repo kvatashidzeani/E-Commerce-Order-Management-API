@@ -39,13 +39,13 @@ class ProductServiceTest {
     @Test
     void createProductPersistsMappedEntity() {
         ProductRequest request = new ProductRequest(
-                "Phone", "desc", "SKU-9", new BigDecimal("20.00"), 4, 1L, true
+                "Phone", "desc", null, "SKU-9", new BigDecimal("20.00"), 4, 1L, true
         );
         Category category = Category.builder().id(1L).name("Phones").build();
         Product entity = Product.builder().name("Phone").sku("SKU-9").build();
         Product saved = Product.builder().id(11L).name("Phone").sku("SKU-9").category(category).build();
         ProductResponse response = new ProductResponse(
-                11L, "Phone", "desc", "SKU-9", new BigDecimal("20.00"),
+                11L, "Phone", "desc", null, "SKU-9", new BigDecimal("20.00"),
                 4, 1L, "Phones", true, 0L, null, null
         );
 
@@ -66,7 +66,7 @@ class ProductServiceTest {
         when(productRepository.existsBySkuIgnoreCase("SKU-9")).thenReturn(true);
 
         assertThatThrownBy(() -> productService.create(
-                new ProductRequest("Phone", "d", "SKU-9", BigDecimal.ONE, 1, 1L, true)
+                new ProductRequest("Phone", "d", null, "SKU-9", BigDecimal.ONE, 1, 1L, true)
         )).isInstanceOf(BusinessException.class)
                 .hasMessageContaining("SKU already exists");
     }
@@ -84,7 +84,7 @@ class ProductServiceTest {
         when(productRepository.findWithCategoryById(5L)).thenReturn(Optional.of(product));
         when(productRepository.save(product)).thenReturn(product);
         when(productMapper.toResponse(product)).thenReturn(new ProductResponse(
-                5L, "Phone", null, "SKU-1", BigDecimal.ONE, 1, 1L, "Phones",
+                5L, "Phone", null, null, "SKU-1", BigDecimal.ONE, 1, 1L, "Phones",
                 false, 0L, null, null
         ));
 
@@ -99,7 +99,7 @@ class ProductServiceTest {
         when(productRepository.findWithCategoryById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> productService.update(
-                99L, new ProductUpdateRequest("x", null, null, null, null, null)
+                99L, new ProductUpdateRequest("x", null, null, null, null, null, null)
         )).isInstanceOf(ResourceNotFoundException.class);
     }
 }

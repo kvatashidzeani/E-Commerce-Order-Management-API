@@ -52,7 +52,7 @@ class ProductControllerWebTest {
     @Test
     void listProductsIsPublic() throws Exception {
         ProductResponse product = new ProductResponse(
-                1L, "Laptop", "desc", "SKU-1", new BigDecimal("10.00"),
+                1L, "Laptop", "desc", null, "SKU-1", new BigDecimal("10.00"),
                 5, 1L, "Electronics", true, 0L, Instant.now(), Instant.now()
         );
         when(productService.search(isNull(), isNull(), isNull(), isNull(), anyBoolean(), any()))
