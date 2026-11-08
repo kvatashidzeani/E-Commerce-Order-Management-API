@@ -63,17 +63,7 @@ flowchart LR
 | Service | URL |
 |---|---|
 | Store | https://ecom-frontend-gamma-nine.vercel.app |
-| API | https://api-production-032b.up.railway.app |
 | Swagger | https://api-production-032b.up.railway.app/swagger-ui.html |
-
-## Screenshots
-
-![Catalog with product photos](docs/screenshots/02-catalog.png)
-
-![Login](docs/screenshots/03-login.png)
-
-![Swagger UI](docs/screenshots/04-swagger.png)
-
 
 
 ## Order status machine
