@@ -43,6 +43,29 @@ SKU `LAP-LAST-1` has **stock = 1** for concurrency demos.
 
 > **Security note:** the SPA stores the JWT in `localStorage` for demo convenience. In production prefer an **httpOnly** cookie (reduces XSS token theft risk).
 
+## Architecture
+
+![Architecture](docs/screenshots/01-architecture.jpg)
+
+- **Frontend:** React/Vite on **Vercel**
+- **Backend:** Spring Boot API on **Railway**
+- **DB:** PostgreSQL on **Railway** (users/emails in `users` table)
+- **Flow:** browser → HTTPS REST + JWT → API → JDBC → Postgres
+
+```mermaid
+flowchart LR
+    Browser["Browser (React/Vite)"] -->|HTTPS + JWT| API["Spring Boot API (Railway)"]
+    API -->|JDBC| DB["PostgreSQL (Railway)"]
+```
+
+### Live demo
+
+| Service | URL |
+|---|---|
+| Store | https://ecom-frontend-gamma-nine.vercel.app |
+| API | https://api-production-032b.up.railway.app |
+| Swagger | https://api-production-032b.up.railway.app/swagger-ui.html |
+
 ## Screenshots
 
 ![Catalog with product photos](docs/screenshots/02-catalog.png)
