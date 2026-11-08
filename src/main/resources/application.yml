@@ -2,9 +2,9 @@ spring:
   application:
     name: order-management-api
   datasource:
-    url: jdbc:postgresql://localhost:5433/ecommerce
-    username: ecommerce
-    password: ecommerce
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/ecommerce}
+    username: ${SPRING_DATASOURCE_USERNAME:ecommerce}
+    password: ${SPRING_DATASOURCE_PASSWORD:ecommerce}
     driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: false
@@ -21,11 +21,11 @@ spring:
     locations: classpath:db/migration
 
 server:
-  port: 8081
+  port: ${PORT:8081}
 
 app:
   jwt:
-    secret: "ChangeThisSecretKeyToAtLeast256BitsForHs256Algorithm!!"
+    secret: ${APP_JWT_SECRET:ChangeThisSecretKeyToAtLeast256BitsForHs256Algorithm!!}
     expiration-ms: 86400000
 
 springdoc:
